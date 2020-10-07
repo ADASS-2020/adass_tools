@@ -25,7 +25,7 @@ conn = psycopg2.connect(database="pretalx", user="pretalx", host=tunnel.local_bi
 
 sql = """
 SELECT 
-submission_submission.title, submission_submission.state, person_user.email
+submission_submission.title, submission_submission.state, submission_submission.paper_id, person_user.email
 FROM 
 submission_submission,
 person_user
@@ -65,10 +65,19 @@ for idx, row in postgredf.iterrows():
         i += 1
 
 i = 1
+print("--------------------------------------------------------")
+print("Main authors not registered with contributions confirmed")
+print("--------------------------------------------------------")
+for idx, row in postgredf.iterrows():
+    if registered[registered["Email"] == row["email"]].empty and row["state"] == "confirmed":
+        print(f"{i}; {row['email']}; {row['title']}")
+        i += 1
+
+i = 1
 print("----------------------------------------------------")
 print("Main authors registered with contributions confirmed")
 print("----------------------------------------------------")
 for idx, row in postgredf.iterrows():
     if not registered[registered["Email"] == row["email"]].empty and row["state"] == "confirmed":
-        print(f"{i}; {row['email']}; {row['title']}")
+        print(f"{i}; {row['email']}; {row['paper_id']}; {row['title']}")
         i += 1
