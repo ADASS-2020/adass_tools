@@ -46,9 +46,11 @@ sh = gc.open_by_key(GOOGLE_DOC)
 worksheet = sh.get_worksheet(0)
 googledf = pd.DataFrame(worksheet.get_all_records())
 
+invited = googledf[googledf["INVITED"] == "Yes"]
 not_invited = googledf[googledf["INVITED"] == ""]
-registered = not_invited[not_invited["Amount"] != 0]
 not_registered = not_invited[not_invited["Amount"] == 0]
+payed = not_invited[not_invited["Amount"] != 0]
+registered = pd.concat([invited, payed])
 
 print("---------------------")
 print("People not registered")
