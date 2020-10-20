@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .data/
 .log/
 
@@ -46,3 +47,5 @@ Pipfile.lock
 *.csv-*
 *.numbers
 *.tab
+.idea
+.venv
