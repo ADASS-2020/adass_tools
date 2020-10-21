@@ -49,3 +49,4 @@ Pipfile.lock
 *.tab
 .idea
 .venv
+*.txt
