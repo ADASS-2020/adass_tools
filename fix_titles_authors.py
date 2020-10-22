@@ -75,10 +75,12 @@ def edit_index(event, changes, root):
         # Fix the SVGs
         containers = soup.find_all('div', 'export-qrcode-image')
         assert len(containers) == 2
-        # ics
-        containers[0].svg = isvg.read()
-        # xml
-        containers[1].svg = xsvg.read()
+        for i, fd in enumerate((isvg, xsvg)):
+            doc = BeautifulSoup(fd.read(), 'html.parser')
+            tag = doc.svg
+            tag['width'] = containers[i].svg['width']
+            tag['height'] = containers[i].svg['height']
+            containers[i].svg.replaceWith(tag)
 
         # Fix titles and authors
         for container in soup.find_all('div', 'pretalx-schedule-talk'):
