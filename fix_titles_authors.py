@@ -1,6 +1,8 @@
 """
 Simply fetch the PID (paper id) for each contribution and prepend it to the
 contribution title. This is done entirely in the database.
+
+This also fixes the SVGs for the calendar integration files.
 """
 import argparse
 import os
@@ -25,6 +27,11 @@ CODES = {
  'I': 'Invited Talk',
  'H': 'Software Prize Talk',
 }
+
+# Just make sure that these SVGs are exactly what you want to inject into
+# index.html. Typically this means the svg tag and its children.
+ICS_SVG = 'schedule-ics.svg'
+XML_SVG = 'schedule-xml.svg'
 
 SELECT = '''\
 SELECT
@@ -60,12 +67,20 @@ def fix_auth_order(first_author, all_authors):
 
 def edit_index(event, changes, root):
     schedule_dir = os.path.join(root, event, 'schedule')
-    # export_dir = os.path.join(schedule_dir, 'export')
-
     index_path = os.path.join(schedule_dir, 'index.html')
 
-    with open(index_path) as f:
+    with open(index_path) as f, open(ICS_SVG) as isvg, open(XML_SVG) as xsvg:
         soup = BeautifulSoup(f, 'html.parser')
+
+        # Fix the SVGs
+        containers = soup.find_all('div', 'export-qrcode-image')
+        assert len(containers) == 2
+        # ics
+        containers[0].svg = isvg.read()
+        # xml
+        containers[1].svg = xsvg.read()
+
+        # Fix titles and authors
         for container in soup.find_all('div', 'pretalx-schedule-talk'):
             code = container['id']
             if code not in changes:
