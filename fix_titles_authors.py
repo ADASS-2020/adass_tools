@@ -9,6 +9,14 @@ from bs4 import BeautifulSoup
 import psycopg2
 
 
+# This is a hack
+TUTORIAL_IDS = (
+    'ECLRSH',
+    'GEJ3BT',
+    'SKDNHX',
+    'WZ9YVR',
+)
+
 CODES = {
  'P': 'Poster',
  'O': 'Oral Contribution',
@@ -50,7 +58,7 @@ def fix_auth_order(first_author, all_authors):
     )
 
 
-def edit_files(event, changes, root):
+def edit_index(event, changes, root):
     schedule_dir = os.path.join(root, event, 'schedule')
     # export_dir = os.path.join(schedule_dir, 'export')
 
@@ -103,21 +111,18 @@ if __name__ == '__main__':
     changes = {}
     for row in cur:
         (pk, code, pid, title, first_author) = row
-        if pid is None:
+
+        # Hack
+        if code in TUTORIAL_IDS:
+            new_title = f'Tutorial - {title}'
+        elif pid is not None:
+            typ = CODES[pid[0]]
+            new_title = f'{typ} ({pid}) - {title}'
+            assert code not in changes
+        else:
             print(f'{title}: SKIPPED', file=sys.stderr)
             continue
-        typ = CODES[pid[0]]
-        new_title = f'{typ} ({pid}) - {title}'
-        assert code not in changes
+
         changes[code] = (new_title, first_author)
 
-    # Now edit the HTML/iCal etc.
-    # The HTML dump has this structure:
-    #   event_name/
-    #       schedule/
-    #           index.html
-    #           feed.xml
-    #           export/
-    #               schedule.[ics|json|xcal|xml]
-    # Plus other files we do not want to change.
-    edit_files(args.event, changes, root)
+    edit_index(args.event, changes, root)
