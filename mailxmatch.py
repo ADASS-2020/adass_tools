@@ -1,3 +1,13 @@
+"""
+Build different lists of people registered in pretalx and/or google
+spread sheet. The script makes a crossmatch between both registries
+and displays the following lists.
+
+- People in Google spreadsheet not registered in ADASS
+- Main authors in pretalx not registered in ADASS
+- Main authors with contributions confirmed in pretalx not registered in ADASS
+- Main authors with contributions confirmed in pretalx registered in ADASS
+"""
 import psycopg2
 from sshtunnel import SSHTunnelForwarder
 import pandas as pd
@@ -52,9 +62,9 @@ not_registered = not_invited[not_invited["Amount"] == 0]
 payed = not_invited[not_invited["Amount"] != 0]
 registered = pd.concat([invited, payed])
 
-print("---------------------")
-print("People not registered")
-print("---------------------")
+print("-------------------------------------------")
+print("People in Google spreadsheet not registered")
+print("-------------------------------------------")
 print(not_registered["Email"])
 
 i = 1
