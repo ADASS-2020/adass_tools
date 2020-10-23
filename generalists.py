@@ -115,7 +115,32 @@ def fill_bofs():
     contents = ""
     for pack in bofs:
         title, abstract, code, author = pack
-        contents += f"- <a href='{program_url}/{code}' target='_blank'>{title}</a>, {author}\n"
+        contents += f"<b><a href='{program_url}/{code}' target='_blank'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+        contents += f"{abstract}\n\n"
+    fn = open(base / fold / "contents.lr", "a")
+    fn.write(contents)
+    fn.close()
+
+
+def fill_demos():
+    fold = Path(folders[4])
+    contents = ""
+    for pack in demos:
+        title, abstract, code, author = pack
+        contents += f"<b><a href='{program_url}/{code}' target='_blank'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+        contents += f"{abstract}\n\n"
+    fn = open(base / fold / "contents.lr", "a")
+    fn.write(contents)
+    fn.close()
+
+
+def fill_tutos():
+    fold = Path(folders[5])
+    contents = ""
+    for pack in tutos:
+        title, abstract, code, author = pack
+        contents += f"<b><a href='{program_url}/{code}' target='_blank'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+        contents += f"{abstract}\n\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
@@ -197,6 +222,8 @@ ORDER BY title
 """
 cur = conn.cursor()
 cur.execute(sql_demos)
+for row in cur:
+    demos.append(row)
 
 # fill tutos
 sql_tutos = sql
@@ -206,7 +233,8 @@ ORDER BY title
 """
 cur = conn.cursor()
 cur.execute(sql_tutos)
-
+for row in cur:
+    tutos.append(row)
 
 # start filling files
 make_folder_structure()
@@ -214,8 +242,8 @@ fill_posters()
 fill_talks()
 fill_invited()
 fill_bofs()
-# fill_demos()
-# fill_tutorials()
+fill_demos()
+fill_tutos()
 
 # close connection
 conn.close()
