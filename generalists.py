@@ -1,5 +1,5 @@
 """
-Build three lektor files with lists of contributions.
+Build different lektor files with lists of contributions.
 
 The different files account for lists of posters, talks and other oral
 contributions. Each list is composed of different theme blocks, so
@@ -105,11 +105,6 @@ def fill_invited():
     fn.close()
 
 
-conn = psycopg2.connect(database="pretalx",
-                        user="pretalx",
-                        password="",
-                        host="pretalx.adass2020.es",
-                        port="5432")
 def fill_bofs():
     fold = Path(folders[3])
     contents = ""
@@ -146,7 +141,12 @@ def fill_tutos():
     fn.close()
 
 
-
+# connect to posgre pretalx
+conn = psycopg2.connect(database="pretalx",
+                        user="pretalx",
+                        password="",
+                        host="pretalx.adass2020.es",
+                        port="5432")
 
 # build listings data structure
 sql = """
