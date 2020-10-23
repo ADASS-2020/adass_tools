@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 base = "/Users/jer/git/adassweb/website/content"
 program_url = "https://schedule.adass2020.es/adass2020/talk"
-folders = ["posters", "talks", "invited-talks", "BOFs", "demos", "tutorials"]
+folders = ["posters", "talks", "invited-talks", "bofs", "demos", "tutorials"]
 themes = {
     "1": "Science Platforms and Data Lakes",
     "2": "Cloud Computing at Different Scales",
@@ -53,6 +53,8 @@ def make_folder_structure():
         item = item.replace("-", " ")
         content = content.replace("title:", f"title: {item.capitalize()}")
         content = content.replace("description:", f"description: {item.capitalize()}")
+        if item == "bofs":
+            content = content.replace("Bofs", "BOFs")
         Path.mkdir(base / fold, parents=True, exist_ok=True)
         fn = open(base / fold / "contents.lr", "w")
         fn.write(content)
@@ -108,6 +110,17 @@ conn = psycopg2.connect(database="pretalx",
                         password="",
                         host="pretalx.adass2020.es",
                         port="5432")
+def fill_bofs():
+    fold = Path(folders[3])
+    contents = ""
+    for pack in bofs:
+        title, abstract, code, author = pack
+        contents += f"- <a href='{program_url}/{code}' target='_blank'>{title}</a>, {author}\n"
+    fn = open(base / fold / "contents.lr", "a")
+    fn.write(contents)
+    fn.close()
+
+
 
 
 # build listings data structure
@@ -165,6 +178,17 @@ for number, label in themes.items():
     for row in cur:
         listings[number]["talks"]["contributed"].append(row)
 
+# fill bofs
+sql_bofs = sql
+sql_bofs += """
+AND submission_submission.submission_type_id=4
+ORDER BY title
+"""
+cur = conn.cursor()
+cur.execute(sql_bofs)
+for row in cur:
+    bofs.append(row)
+
 # fill demos
 sql_demos = sql
 sql_demos += """
@@ -183,24 +207,14 @@ ORDER BY title
 cur = conn.cursor()
 cur.execute(sql_tutos)
 
-# fill bofs
-sql_bofs = sql
-sql_bofs += """
-AND submission_submission.submission_type_id=4
-ORDER BY title
-"""
-cur = conn.cursor()
-cur.execute(sql_bofs)
-
-
 
 # start filling files
 make_folder_structure()
 fill_posters()
 fill_talks()
 fill_invited()
+fill_bofs()
 # fill_demos()
-# fill_bofs()
 # fill_tutorials()
 
 # close connection
