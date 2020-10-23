@@ -148,7 +148,7 @@ def fill_tutos():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('base', metavar='ROOTDIR', type=str, nvar=1,
+    parser.add_argument('base', metavar='ROOTDIR', type=str, nargs=1,
                         default=DEF_BASE,
                         help='root of the lektor site (website/content)')
     args = parser.parse_args()
