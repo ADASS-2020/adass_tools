@@ -15,7 +15,7 @@ log = logging.getLogger(__name__)
 
 base = "/Users/jer/git/adassweb/website/content"
 program_url = "https://schedule.adass2020.es/adass2020/talk"
-folders = ["posters", "talks", "invited", "BOFs", "demos", "tutorials"]
+folders = ["posters", "talks", "invited-talks", "BOFs", "demos", "tutorials"]
 themes = {
     "1": "Science Platforms and Data Lakes",
     "2": "Cloud Computing at Different Scales",
@@ -48,10 +48,11 @@ bofs = []
 
 def make_folder_structure():
     for item in folders:
-        content = template
-        content.replace("title:", f"title: {item.capitalize()}")
-        content.replace("description:", f"description: {item.capitalize()}")
         fold = Path(item)
+        content = template
+        item = item.replace("-", " ")
+        content = content.replace("title:", f"title: {item.capitalize()}")
+        content = content.replace("description:", f"description: {item.capitalize()}")
         Path.mkdir(base / fold, parents=True, exist_ok=True)
         fn = open(base / fold / "contents.lr", "w")
         fn.write(content)
@@ -65,8 +66,8 @@ def fill_posters():
     for number, label in themes.items():
         bag = listings[number]["posters"]
         contents += f"\n**{label.upper()}**\n\n"
-        for triplet in bag:
-            title, code, author = triplet
+        for pack in bag:
+            title, abstract, code, author = pack
             contents += f"- <a href='{program_url}/{code}' target='_blank'>{title}</a>, {author}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
@@ -79,21 +80,24 @@ def fill_talks():
     for number, label in themes.items():
         bag = listings[number]["talks"]["contributed"]
         contents += f"\n**{label.upper()}**\n\n"
-        for triplet in bag:
-            title, code, author = triplet
+        for pack in bag:
+            title, abstract, code, author = pack
             contents += f"- <a href='{program_url}/{code}' target='_blank'>{title}</a>, {author}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
 
 
-def fill_others():
-    # print(demos)
-    # print(tutos)
-    # print(bofs)
+def fill_invited():
     fold = Path(folders[2])
     contents = ""
-
+    for number, label in themes.items():
+        bag = listings[number]["talks"]["invited"]
+        if len(bag):
+            contents += f"\n**{label.upper()}**\n\n"
+            for pack in bag:
+                title, abstract, code, author = pack
+                contents += f"- <a href='{program_url}/{code}' target='_blank'>{title}</a>, {author}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
@@ -109,7 +113,7 @@ conn = psycopg2.connect(database="pretalx",
 # build listings data structure
 sql = """
 SELECT
-title, submission_submission.code, name
+title, abstract, submission_submission.code, name
 FROM
 submission_submission,
 person_user
@@ -135,8 +139,7 @@ for number, label in themes.items():
     cur = conn.cursor()
     cur.execute(sql_posters)
     for row in cur:
-        (title, code, author) = row
-        listings[number]["posters"].append((title, code, author))
+        listings[number]["posters"].append(row)
 
     # add invited talks for each theme
     sql_invited_talks = sql
@@ -148,8 +151,7 @@ for number, label in themes.items():
     cur = conn.cursor()
     cur.execute(sql_invited_talks)
     for row in cur:
-        (title, code, author) = row
-        listings[number]["talks"]["invited"].append((title, code, author))
+        listings[number]["talks"]["invited"].append(row)
 
     # add contributed talks for each theme
     sql_talks = sql
@@ -161,8 +163,7 @@ for number, label in themes.items():
     cur = conn.cursor()
     cur.execute(sql_talks)
     for row in cur:
-        (title, code, author) = row
-        listings[number]["talks"]["contributed"].append((title, code, author))
+        listings[number]["talks"]["contributed"].append(row)
 
 # fill demos
 sql_demos = sql
@@ -197,7 +198,7 @@ cur.execute(sql_bofs)
 make_folder_structure()
 fill_posters()
 fill_talks()
-# fill_invited()
+fill_invited()
 # fill_demos()
 # fill_bofs()
 # fill_tutorials()
