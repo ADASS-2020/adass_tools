@@ -48,17 +48,20 @@ def fill_participants():
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
+    log.info(f"filled {len(participants)} participants")
 
 
 def fill_speakers():
     fold = Path(folders[1])
     contents = ""
+    speakers.sort(key=lambda tup: tup[1])  # sorts in place
     for pack in speakers:
-        name, institution, code = pack
-        contents += f"- <a href='{program_url}/{code}' target='_blank'>{name}</a> - {institution}\n"
+        name, surname, code, affiliation = pack
+        contents += f"- <a href='{program_url}/{code}' target='_blank'>{name} {surname}</a> - {affiliation}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
+    log.info(f"filled {len(speakers)} speakers")
 
 
 gc = gspread.service_account()
@@ -78,44 +81,34 @@ conn = psycopg2.connect(database="pretalx",
                         host="pretalx.adass2020.es",
                         port="5432")
 
-# # build listings data structure
-# sql = """
-# SELECT
-# title, abstract, submission_submission.code, name
-# FROM
-# submission_submission,
-# person_user
-# WHERE
-# submission_submission.main_author_id=person_user.id
-# AND submission_submission.state='confirmed'
-# """
+# grab speakers
+sql = """
+SELECT DISTINCT ON (person_user.email) email,
+person_user.code
+FROM 
+submission_submission,
+submission_submission_speakers,
+person_user
+WHERE
+submission_submission.id=submission_submission_speakers.submission_id
+AND submission_submission_speakers.user_id=person_user.id
+AND submission_submission.submission_type_id in(1,3,4,14,15,17)
+AND submission_submission.state='confirmed';
+"""
+pgdf = pd.read_sql_query(sql, conn)
+for idx, row in pgdf.iterrows():
+    if not participants[participants["Email"] == row["email"]].empty:
+        name = participants[participants["Email"] == row["email"]]["Name"].values[0]
+        surname = participants[participants["Email"] == row["email"]]["Surname"].values[0]
+        affiliation = participants[participants["Email"] == row["email"]]["Affiliation"].values[0]
+        speakers.append((name, surname, row["code"], affiliation))
 
-# # fill participants
-# sql_bofs = sql
-# sql_bofs += """
-# AND submission_submission.submission_type_id=4
-# ORDER BY title
-# """
-# cur = conn.cursor()
-# cur.execute(sql_bofs)
-# for row in cur:
-#     bofs.append(row)
-#
-# # fill speakers
-# sql_demos = sql
-# sql_demos += """
-# AND submission_submission.submission_type_id=15
-# ORDER BY title
-# """
-# cur = conn.cursor()
-# cur.execute(sql_demos)
-# for row in cur:
-#     demos.append(row)
 
 # start filling files
 make_folder_structure()
 fill_participants()
-# fill_speakers()
+fill_speakers()
 
 # close connection
 conn.close()
+
