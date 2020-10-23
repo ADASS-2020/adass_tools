@@ -70,7 +70,7 @@ def fill_posters(base):
         for pack in bag:
             title, abstract, code, author = pack
             contents += f"- <a href='{program_url}/{code}' " + \
-                f"target='_blank'>{title}</a>, {author}\n"
+                f"target='_schedule'>{title}</a>, {author}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
@@ -85,7 +85,7 @@ def fill_talks(base):
         for pack in bag:
             title, abstract, code, author = pack
             contents += f"- <a href='{program_url}/{code}' " + \
-                f"target='_blank'>{title}</a>, {author}\n"
+                f"target='_schedule'>{title}</a>, {author}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
@@ -101,7 +101,7 @@ def fill_invited(base):
             for pack in bag:
                 title, abstract, code, author = pack
                 contents += f"- <a href='{program_url}/{code}' " + \
-                    f"target='_blank'>{title}</a>, {author}\n"
+                    f"target='_schedule'>{title}</a>, {author}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
@@ -113,7 +113,7 @@ def fill_bofs(base):
     for pack in bofs:
         title, abstract, code, author = pack
         contents += f"<b><a href='{program_url}/{code}' " + \
-            f"target='_blank'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+            f"target='_schedule'>{title}</a></b>\n\n<b>{author}</b>\n\n"
         contents += f"{abstract}\n\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
@@ -126,7 +126,7 @@ def fill_demos(base):
     for pack in demos:
         title, abstract, code, author = pack
         contents += f"<b><a href='{program_url}/{code}' " + \
-            f"target='_blank'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+            f"target='_schedule'>{title}</a></b>\n\n<b>{author}</b>\n\n"
         contents += f"{abstract}\n\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
@@ -139,7 +139,7 @@ def fill_tutos():
     for pack in tutos:
         title, abstract, code, author = pack
         contents += f"<b><a href='{program_url}/{code}' " + \
-            f"target='_blank'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+            f"target='_schedule'>{title}</a></b>\n\n<b>{author}</b>\n\n"
         contents += f"{abstract}\n\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)

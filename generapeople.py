@@ -57,7 +57,7 @@ def fill_speakers():
     speakers.sort(key=lambda tup: tup[1])  # sorts in place
     for pack in speakers:
         name, surname, code, affiliation = pack
-        contents += f"- <a href='{program_url}/{code}' target='_blank'>{name} {surname}</a> - {affiliation}\n"
+        contents += f"- <a href='{program_url}/{code}' target='_schedule'>{name} {surname}</a> - {affiliation}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
