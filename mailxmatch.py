@@ -52,12 +52,11 @@ tunnel.stop()
 
 # open google spreadsheet
 gc = gspread.service_account()
-sh = gc.open_by_key(GOOGLE_DOC)
-worksheet = sh.get_worksheet(0)
-googledf = pd.DataFrame(worksheet.get_all_records())
+wks = gc.open('ADASS XXX Registrations').sheet1
+gdf = pd.DataFrame(wks.get_all_records())[1:]
 
-invited = googledf[googledf["INVITED"] == "Yes"]
-not_invited = googledf[googledf["INVITED"] == ""]
+invited = gdf[gdf["INVITED"] == "Yes"]
+not_invited = gdf[gdf["INVITED"] == ""]
 not_registered = not_invited[not_invited["Amount"] == 0]
 payed = not_invited[not_invited["Amount"] != 0]
 registered = pd.concat([invited, payed])
