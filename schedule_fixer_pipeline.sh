@@ -20,5 +20,8 @@ export PATH=/root/env/bin:$PATH
 # Step 4: fix all calendar files to use UTC instead of CEST/CET/Madrid time
 ./fix_calendars.sh -r /tmp/adass2020 -e adass2020
 
-# Step 5: Copy staging to prod
+# Step 5. remove any poster from the calendars
+/root/env/bin/python3 ./remove_room_from_cals.py -r Posters /tmp/adass2020/adass2020/schedule/export/schedule.*
+
+# Step 6: Copy staging to prod
 /usr/bin/rsync -av --delete /tmp/adass2020/ /var/www/schedule/
