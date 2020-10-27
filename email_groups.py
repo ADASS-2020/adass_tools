@@ -24,13 +24,14 @@ import csv
 from email.message import EmailMessage
 import os
 import smtplib
+import sys
 import time
 
 
-def isattendee(record):
+def isattendee(record, operator=all):
     keys = ('isspeaker', 'istrainer', 'isposterauth', 'isadmin', 'isloc',
             'ispoc', 'isvolunteer')
-    return all(record[key].lower() == 'false' for key in keys)
+    return operator(record[key].lower() == 'false' for key in keys)
 
 
 # The values of GROUPS are function that operate on a single element. They are
@@ -99,6 +100,8 @@ def send_email(subject=EMAIL_SUBJECT, body=EMAIL_BODTY,
 
     with smtplib.SMTP_SSL(host, port) as s:
         s.login(user, passwd)
+        writer = csv.DictWriter(sys.stdout, fieldnames=records[0].keys())
+        writer.writeheader()
         for rec in records:
             address = f'{rec["name"]} <{rec["email"]}>'
             name = rec['name']
@@ -110,22 +113,22 @@ def send_email(subject=EMAIL_SUBJECT, body=EMAIL_BODTY,
             message['From'] = sender
             message['Reply-To'] = replyto
             message['To'] = address
-            print(message)
-            # s.send_message(message)
-            print(f'{address}\tMessage sent')
+            # print(message)
+            s.send_message(message)
+            writer.writerow(rec)
             time.sleep(.1)
 
 
-def select_people(regfile, groups):
-    def selector(record):
-        return all(GROUPS[g](record) for g in groups)
+def select_people(regfile, groups, operator=all):
+    def selector(record, operator):
+        return operator(GROUPS[g](record) for g in groups)
 
     people = []
     emails = set()
     with open(regfile) as f:
         reader = csv.DictReader(f)
         for record in reader:
-            if selector(record) and record['email'] not in emails:
+            if selector(record, operator) and record['email'] not in emails:
                 people.append(record)
                 emails.add(record['email'])
     return people
@@ -133,6 +136,11 @@ def select_people(regfile, groups):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--operator', required=False, type=str,
+                        choices=('and', 'or'), default='and',
+                        help='logical op [defaults to and]')
+    parser.add_argument('--subject', '-s', required=False, type=str,
+                        help='custom email subject')
     parser.add_argument('--body', '-b', required=False, type=str,
                         help='custom text file with email body')
     parser.add_argument('--group', '-g', required=True, action='append',
@@ -147,11 +155,20 @@ if __name__ == '__main__':
     if 'all' in groups and len(groups) > 1:
         parser.error('You cannot specify `all` together with any other group')
 
-    records = select_people(args.regfile[0], groups)
     if args.body:
         body = open(args.body).read()
     else:
         body = EMAIL_BODTY
+    if args.subject:
+        subject = args.subject
+    else:
+        subject = EMAIL_SUBJECT
+    if args.operator == 'or':
+        logicalfn = any
+    else:
+        logicalfn = all
+
+    records = select_people(args.regfile[0], groups, operator=logicalfn)
 
     if args.exclude:
         exclude_records = select_people(args.exclude, ['all'])
@@ -165,4 +182,4 @@ if __name__ == '__main__':
     else:
         clean = records
 
-    send_email(records=clean, body=body)
+    send_email(records=clean, body=body, subject=subject)
