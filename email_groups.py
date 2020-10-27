@@ -57,7 +57,7 @@ As you probably already know, ADASS will be an online conference this year.
 As such, it will make use of a couple of tools to deliver talks and allow for
 interaction among participants.
 
-The platform that we will use is described in
+The platform that we use and their usage guidelines are described in
 
 * The User Guide (https://adass2020.es/user-guide/)
 * The Speaker Guide (https://adass2020.es/static/files/SpeakerGuide.pdf)
