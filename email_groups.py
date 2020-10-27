@@ -14,6 +14,9 @@ Two groups deserve special mention: all and attendee.
 all means everybody
 attendee = all - (speaker + trainer + admin + loc + poc _ volunteer)
 
+The special group all is the only one that cannot be used in conjuction with
+any other group (to avoid easy mistakes).
+
 Special care is taken to avoid sending duplicate emails.
 """
 import argparse
@@ -107,7 +110,8 @@ def send_email(subject=EMAIL_SUBJECT, body=EMAIL_BODTY,
             message['From'] = sender
             message['Reply-To'] = replyto
             message['To'] = address
-            s.send_message(message)
+            print(message)
+            # s.send_message(message)
             print(f'{address}\tMessage sent')
             time.sleep(.1)
 
@@ -129,15 +133,36 @@ def select_people(regfile, groups):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--body', '-b', required=False, type=str,
+                        help='custom text file with email body')
     parser.add_argument('--group', '-g', required=True, action='append',
                         choices=list(GROUPS))
+    parser.add_argument('--exclude', '-e', required=False, type=str,
+                        help='cvs reg file with records to exclude')
     parser.add_argument('regfile', metavar='REG_CSV', nargs=1,
                         help='registration csv file')
     args = parser.parse_args()
 
     groups = args.group
-    if 'all' in groups:
-        groups = ['all']
+    if 'all' in groups and len(groups) > 1:
+        parser.error('You cannot specify `all` together with any other group')
 
     records = select_people(args.regfile[0], groups)
-    send_email(records=records)
+    if args.body:
+        body = open(args.body).read()
+    else:
+        body = EMAIL_BODTY
+
+    if args.exclude:
+        exclude_records = select_people(args.exclude, ['all'])
+        exclude_set = set(','.join(rec.values()) for rec in exclude_records)
+        clean = []
+        while records:
+            rec = records.pop()
+            key = ','.join(rec.values())
+            if key not in exclude_set:
+                clean.append(rec)
+    else:
+        clean = records
+
+    send_email(records=clean, body=body)
