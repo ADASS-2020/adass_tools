@@ -108,7 +108,7 @@ def send_email(subject=EMAIL_SUBJECT, body=EMAIL_BODTY,
             message['Reply-To'] = replyto
             message['To'] = address
             s.send_message(message)
-            print(f'{name} <{address}>\tMessage sent')
+            print(f'{address}\tMessage sent')
             time.sleep(.1)
 
 
