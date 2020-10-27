@@ -61,12 +61,11 @@ The platform that we will use is described in
 
 * The User Guide (https://adass2020.es/user-guide/)
 * The Speaker Guide (https://adass2020.es/static/files/SpeakerGuide.pdf)
-* This blog post (https://adass2020.es/news/guides-published/)
 
 The 2020 LOC encourages you to register on our platform before the conference
 and ideally between this and next week.
 
-You will find all details on how to register in the above-mentioned documents.
+You will find all details on how to register in the User Guide.
 
 For your convenience, here is the registration command that you will need to
 use:
@@ -77,9 +76,9 @@ IMPORTANT: If you already registered (and we know some of you already did),
 you do not need to re-register. Just head over to #social on our Discord
 server and enjoy the good company.
 
-For any doubt, please consult our the above-mentioned documents as well as
-our FAQ page (https://adass2020.es/frequently-asked-questions/). When all
-fails, contact the LOC (adass2020@iram.es) ;-)
+For any doubt, please consult the above-mentioned documents as well as our
+FAQ page (https://adass2020.es/frequently-asked-questions/). When all fails,
+contact the LOC (adass2020@iram.es) ;-)
 
 Thanks and see you soon!
 The ADASS 2020 LOC
