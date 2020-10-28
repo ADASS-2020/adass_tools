@@ -44,14 +44,22 @@ body:
 """
 
 
+def add_icons(pdf, video):
+    icons = "- "
+    if pdf:
+        icons += f"<a href='{pdf}'>&#x1F4D1;</a>"
+    if video:
+        icons += f"<a href='{video}'>&#x1F3A6;</a>"
+    return icons
+
+
 def make_folder_structure(base):
     for item in folders:
         fold = Path(item)
         content = template
         item = item.replace("-", " ")
         content = content.replace("title:", f"title: {item.capitalize()}")
-        content = content.replace("description:",
-                                  f"description: {item.capitalize()}")
+        content = content.replace("description:", f"description: {item.capitalize()}")
         if item == "bofs":
             content = content.replace("Bofs", "BOFs")
         Path.mkdir(base / fold, parents=True, exist_ok=True)
@@ -68,9 +76,8 @@ def fill_posters(base):
         bag = listings[number]["posters"]
         contents += f"\n**{label.upper()}**\n\n"
         for pack in bag:
-            title, abstract, code, author = pack
-            contents += f"- <a href='{program_url}/{code}' " + \
-                f"target='_schedule'>{title}</a>, {author}\n"
+            title, abstract, code, author, pdf, video = pack
+            contents += f"{add_icons(pdf, video)} <a href='{program_url}/{code}' target='_schedule'>{title}</a>, {author}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
@@ -83,9 +90,8 @@ def fill_talks(base):
         bag = listings[number]["talks"]["contributed"]
         contents += f"\n**{label.upper()}**\n\n"
         for pack in bag:
-            title, abstract, code, author = pack
-            contents += f"- <a href='{program_url}/{code}' " + \
-                f"target='_schedule'>{title}</a>, {author}\n"
+            title, abstract, code, author, pdf, video = pack
+            contents += f"{add_icons(pdf, video)} <a href='{program_url}/{code}' target='_schedule'>{title}</a>, {author}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
@@ -99,9 +105,8 @@ def fill_invited(base):
         if len(bag):
             contents += f"\n**{label.upper()}**\n\n"
             for pack in bag:
-                title, abstract, code, author = pack
-                contents += f"- <a href='{program_url}/{code}' " + \
-                    f"target='_schedule'>{title}</a>, {author}\n"
+                title, abstract, code, author, pdf, video = pack
+                contents += f"{add_icons(pdf, video)} <a href='{program_url}/{code}' target='_schedule'>{title}</a>, {author}\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
@@ -111,9 +116,11 @@ def fill_bofs(base):
     fold = Path(folders[3])
     contents = ""
     for pack in bofs:
-        title, abstract, code, author = pack
-        contents += f"<b><a href='{program_url}/{code}' " + \
-            f"target='_schedule'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+        title, abstract, code, author, pdf, video = pack
+        contents += (
+            f"<b><a href='{program_url}/{code}' "
+            + f"target='_schedule'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+        )
         contents += f"{abstract}\n\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
@@ -124,9 +131,11 @@ def fill_demos(base):
     fold = Path(folders[4])
     contents = ""
     for pack in demos:
-        title, abstract, code, author = pack
-        contents += f"<b><a href='{program_url}/{code}' " + \
-            f"target='_schedule'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+        title, abstract, code, author, pdf, video = pack
+        contents += (
+            f"<b><a href='{program_url}/{code}' "
+            + f"target='_schedule'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+        )
         contents += f"{abstract}\n\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
@@ -137,25 +146,32 @@ def fill_tutos():
     fold = Path(folders[5])
     contents = ""
     for pack in tutos:
-        title, abstract, code, author = pack
-        contents += f"<b><a href='{program_url}/{code}' " + \
-            f"target='_schedule'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+        title, abstract, code, author, pdf, video = pack
+        contents += (
+            f"<b><a href='{program_url}/{code}' "
+            + f"target='_schedule'>{title}</a></b>\n\n<b>{author}</b>\n\n"
+        )
         contents += f"{abstract}\n\n"
     fn = open(base / fold / "contents.lr", "a")
     fn.write(contents)
     fn.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('base', metavar='ROOTDIR', type=str, nargs=1,
-                        default=DEF_BASE,
-                        help='root of the lektor site (website/content)')
+    parser.add_argument(
+        "base",
+        metavar="ROOTDIR",
+        type=str,
+        nargs=1,
+        default=DEF_BASE,
+        help="root of the lektor site (website/content)",
+    )
     args = parser.parse_args()
     base = args.base[0]
 
     if not os.path.isdir(base):
-        parser.error(f'{base}: no such file or directory')
+        parser.error(f"{base}: no such file or directory")
 
     listings = {}
     demos = []
@@ -163,16 +179,18 @@ if __name__ == '__main__':
     bofs = []
 
     # connect to posgre pretalx
-    with psycopg2.connect(database="pretalx",
-                          user="pretalx",
-                          password="",
-                          host="pretalx.adass2020.es",
-                          port="5432") as conn:
+    with psycopg2.connect(
+        database="pretalx",
+        user="pretalx",
+        password="",
+        host="pretalx.adass2020.es",
+        port="5432",
+    ) as conn:
 
         # build listings data structure
         sql = """
         SELECT
-        title, abstract, submission_submission.code, name
+        title, abstract, submission_submission.code, name, pdf_path, video_path
         FROM
         submission_submission,
         person_user
@@ -183,10 +201,7 @@ if __name__ == '__main__':
         for number, label in themes.items():
             listings[number] = {
                 "posters": [],
-                "talks": {
-                    "invited": [],
-                    "contributed": [],
-                }
+                "talks": {"invited": [], "contributed": [],},
             }
             # add poster for each theme
             sql_posters = sql
