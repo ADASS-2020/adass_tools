@@ -18,7 +18,7 @@ import psycopg2
 FTP_ROOT = '/var/www/html/static/ftp'
 HTML_ROOT = '/var/www/schedule/adass2020/talk'
 MEDIA_ROOT = '/var/www/schedule/media'
-MEDIA_URL_ROOT = 'https://adass2020.es/static/ftp'
+MEDIA_URL_ROOT = 'https:\/\/adass2020.es/static/ftp'
 
 SQL = '''\
 SELECT
