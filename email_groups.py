@@ -96,7 +96,7 @@ SMTP_PASSWD = os.environ['SMTP_PASSWD']
 def send_email(subject=EMAIL_SUBJECT, body=EMAIL_BODTY,
                sender=EMAIL_FROM, replyto=EMAIL_REPLY_TO,
                records=None, host=SMTP_HOST, port=SMTP_PORT,
-               user=SMTP_USER, passwd=SMTP_PASSWD):
+               user=SMTP_USER, passwd=SMTP_PASSWD, dryrun=True):
 
     with smtplib.SMTP_SSL(host, port) as s:
         s.login(user, passwd)
@@ -113,8 +113,10 @@ def send_email(subject=EMAIL_SUBJECT, body=EMAIL_BODTY,
             message['From'] = sender
             message['Reply-To'] = replyto
             message['To'] = address
-            # print(message)
-            s.send_message(message)
+            if dryrun:
+                print(message)
+            else:
+                s.send_message(message)
             writer.writerow(rec)
             time.sleep(.1)
 
@@ -149,6 +151,8 @@ if __name__ == '__main__':
                         help='cvs reg file with records to exclude')
     parser.add_argument('regfile', metavar='REG_CSV', nargs=1,
                         help='registration csv file')
+    parser.add_argument('--dry-run', dest='dryrun', action='store_true',
+                        help='simulation mode: do not send emails')
     args = parser.parse_args()
 
     groups = args.group
@@ -182,4 +186,4 @@ if __name__ == '__main__':
     else:
         clean = records
 
-    send_email(records=clean, body=body, subject=subject)
+    send_email(records=clean, body=body, subject=subject, dryrun=args.dryrun)
