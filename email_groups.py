@@ -176,11 +176,12 @@ if __name__ == '__main__':
 
     if args.exclude:
         exclude_records = select_people(args.exclude, ['all'])
-        exclude_set = set(','.join(rec.values()) for rec in exclude_records)
+        exclude_set = set(','.join(v.lower() for v in rec.values())
+                          for rec in exclude_records)
         clean = []
         while records:
             rec = records.pop()
-            key = ','.join(rec.values())
+            key = ','.join(v.lower() for v in rec.values())
             if key not in exclude_set:
                 clean.append(rec)
     else:
