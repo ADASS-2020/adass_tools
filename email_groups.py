@@ -184,6 +184,7 @@ if __name__ == '__main__':
             key = ','.join(v.lower() for v in rec.values())
             if key not in exclude_set:
                 clean.append(rec)
+        clean.reverse()
     else:
         clean = records
 
