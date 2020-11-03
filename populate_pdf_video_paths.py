@@ -75,8 +75,7 @@ if __name__ == '__main__':
                 [p for p in ftp_path.iterdir()
                  if p.suffix.lower() in ('.pdf', '.mp4')
                     and paper_id in p.name],
-                key=lambda path: path.stat().st_ctime,
-                reverse=True
+                key=lambda path: path.stat().st_mtime
             )
             if not files:
                 # See if the PDF/MP4 was in the DB and just disappeared
@@ -86,6 +85,8 @@ if __name__ == '__main__':
                 #     logging.warning(f'{code} has not uploaded a PDF/MP4')
                 continue
 
+            # Find the newest PDF & MP4. Important that files is sorted in
+            # oldest -> newest since we remove elements from the back.
             newest_pdf = None
             newest_video = None
             while files:
