@@ -55,7 +55,7 @@ EMAIL_FROM = 'ADASS 2020 <noreply@iram.es>'
 EMAIL_BODTY = '''
 Dear {name},
 
-We are less than two weeks away from ADASS 2020 and time is passing fast!
+We are less than one week away from ADASS 2020 and time is passing fast!
 
 As you probably already know, ADASS will be an online conference this year.
 As such, it will make use of a couple of tools to deliver talks and allow for
@@ -72,7 +72,7 @@ and ideally between this and next week.
 You will find all details on how to register in the User Guide.
 
 For your convenience, here is the registration command that you will need to
-use:
+use in the ADASS Discord #registration channel (you can paste it as is):
 
     !register {name}, {reg_code}
 
