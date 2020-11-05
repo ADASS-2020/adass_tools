@@ -160,6 +160,26 @@ if __name__ == '__main__':
             else:
                 existing.replace_with(new_tag)
 
+            # FIXME: this is very hackish!
+            # Is the HTML is about a poster (meaning something "scheduled" in
+            # the Posters room), remove the fake schedule info as well as the
+            # iCal file.
+            h3 = soup.find('h3', 'talk-title')
+
+            # We have two cases here: either h3.small is a simple tag with
+            # text inside (the scheduling info) or is a compound tag with the
+            # scheduling info as well as some i tags with the do not record
+            # icon etc. In this second case, the first element in the tag
+            # contents in the actual string.
+            if h3.small.string and h3.small.string.strip().endswith('Posters'):
+                h3.small.decompose()
+                h3.div.a.decompose()
+            elif h3.small.string is None:
+                txt = h3.small.contents[0]
+                if txt.strip().endswith('Posters'):
+                    h3.small.decompose()
+                    h3.div.a.decompose()
+
             with open(index_path, 'w') as f:
                 f.write(soup.prettify())
                 logging.warning(f'{code} was updated')
