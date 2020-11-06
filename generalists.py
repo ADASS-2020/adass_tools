@@ -72,6 +72,14 @@ def make_folder_structure(base):
 def fill_posters(base):
     fold = Path(folders[0])
     contents = ""
+    contents += """
+#### NOTE
+**There are no specific posters sessions scheduled.**
+Instead conference participants will be allowed to download the PDF poster files from this list.
+They could also download optional complementary self-recorded lightning talks as MP4 video files.
+Access authentication info will be delivered in Discord, where participants could also interact 
+with posters authors individually or within the #posters channel. 
+    """
     for number, label in themes.items():
         bag = listings[number]["posters"]
         contents += f"\n**{label.upper()}**\n\n"
