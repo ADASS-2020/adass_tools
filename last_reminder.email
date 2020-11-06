@@ -1,0 +1,57 @@
+Dear {name},
+
+ADASS 2020 starts in just a couple of days: on Sunday with tutorials and on
+Monday with talks, demos and BoFs!
+
+Please, register on the ADASS Discord server if you have not done that
+already. More information on how to do that in our User Guide
+(https://adass2020.es/user-guide/) and at the bottom of this email.
+
+We will use Discord to publish the links to the Zoom and YouTube streams
+every day, 3 times a day (before each time slot).
+
+
+We have just uploaded a 9 minute video on our YouTube channel explaining how
+to use our conference platform:
+
+https://www.youtube.com/watch?v=Dx_dfPTPZHs
+
+You might want to watch it before the conference to get familiar with the
+tools that you will use next week.
+
+
+Some BoF and tutorial organisers have asked us to include some extra
+information in this email. Here we go!
+
+* BoF session on software licensing
+If you'd like to participate in this BoF on Licensing Practices, please go to
+https://edu.nl/pq6kf and fill in our pre-BoF questionnaire, which will help
+us to organise the session around participants' interests.
+
+* BoF session on cost management for commercial cloud platforms
+If you are interested in attending the Cost Management on Commercial Cloud
+Platforms BOF, you are invited to visit the link below, view the Agenda, vote
+on discussion topics or suggest new topics. Also feel free to contact me at
+gbb AT ipac.caltech.edu . See you all soon!    
+https://bit.ly/32l07Nz
+
+* Tutorial - Interactively exploring and visualizing data on the sky with
+  Jupyter and pywwt
+The tutorial will be conducted using cloud-based Python notebooks
+(mybinder.org), so there shouldn't be anything special that participants will
+need to install or download. General familiarity with Jupyter and Python will
+be important, but that's about it.
+
+* Tutorial - From Semantic segmentation to Instance Segmentation using
+  DeepLearning. 
+The tutorial will be done in google colab. So the only requirement is to have
+an account that allows using colab.
+
+See you soon!
+The ADASS 2020 LOC
+
+P.S. For your convenience, here is he exact command that you need to type in
+the #registration channel in Discord (again only if you have not registered
+on our Discord server yet):
+
+    !register {name}, {reg_code}
